@@ -41,14 +41,13 @@ const fetchEnrollments = async (authToken: string) => {
 };
 
 const fetchClassCount = async (authToken: string) => {
-  
   const response = await fetch('/api/users', {
     headers: {
       'Authorization': `Bearer ${authToken}`
     }
   });
+
   const result = await response.json();
-  
   console.log('Class Count Result:', result.classCount);
   return Number(result.classCount == undefined ? 0 : result.classCount);
 };
@@ -242,7 +241,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="bg-zinc-900 font-inconsolata">
+    <div className="bg-zinc-900 font-mono">
       <SideBar userName={userName} classCount={classCount} />
       <Container sx={{ marginTop: 2 }}>
         <Box mt={4}>

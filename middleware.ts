@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
 
   const url = request.nextUrl.clone();
   const isAuthPage = url.pathname === '/login';
-  const isProtectedPage = url.pathname === '/' || url.pathname === '/add-class';
+  const isProtectedPage = url.pathname === '/' || url.pathname === '/add-class' || url.pathname === '/manage-users';
 
   if (!authToken && isProtectedPage) {
     url.pathname = '/login';
@@ -23,5 +23,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/add-class', '/login'],
+  matcher: ['/', '/add-class', '/login', '/manage-users'],
 };

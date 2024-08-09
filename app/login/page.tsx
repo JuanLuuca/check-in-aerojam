@@ -57,7 +57,7 @@ const Login = () => {
                 {...register('username', { required: true })}
                 error={!!errors.username}
                 helperText={errors.username ? 'Login é obrigatório' : ''}
-                value={username}
+                value={username.toLowerCase()}
                 onChange={(event) => {
                   setUsername(event.target.value);
                   setValue('username', event.target.value);

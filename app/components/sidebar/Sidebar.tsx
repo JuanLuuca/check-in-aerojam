@@ -96,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userName, classCount }) => {
                 <ListItemIcon sx={{ minWidth: '35px', color: 'white' }}>
                   <PeopleIcon />
                 </ListItemIcon>
-                <ListItemText primary="Gerenciar Usuários" sx={{ color: 'white' }} />
+                <ListItemText primary="Gerenciar Alunos" sx={{ color: 'white' }} />
               </ListItem>
               <ListItem button onClick={() => router.push('/add-class')}>
                 <ListItemIcon sx={{ minWidth: '35px', color: 'white' }}>

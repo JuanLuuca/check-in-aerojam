@@ -348,7 +348,7 @@ const AddClassPage = () => {
 
   return (
     <div className="bg-zinc-900">
-      <SideBar classCount={99} userName="Administrador" />
+      <SideBar classCount={0} userName="Admin" />
       <Container sx={{ marginTop: 2 }}>
         <Card sx={{ marginTop: '30px' }}>
           <CardContent>
@@ -501,7 +501,7 @@ const AddClassPage = () => {
             zIndex: 5,
           }}
         >
-          <Typography variant="h6" component="h2" className='text-black mb-2 font-inconsolata'>
+          <Typography variant="h6" component="h2" className='text-black mb-2 font-mono'>
             Editar Aula
           </Typography>
           {editClassData && (
