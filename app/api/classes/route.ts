@@ -5,10 +5,6 @@ import formidable, { File, Fields, Files } from 'formidable';
 import { Readable } from 'stream';
 import { IncomingMessage } from 'http';
 
-export const config = {
-  runtime: 'edge',
-};
-
 export async function GET() {
   await dbConnect();
 
