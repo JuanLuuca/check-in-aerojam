@@ -1,113 +1,312 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import React, { useEffect, useState } from 'react';
+import { Container, Typography, Button, Box, Card, CardContent, CircularProgress } from '@mui/material';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import SideBar from './components/sidebar/Sidebar';
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+const MySwal = withReactContent(Swal);
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+interface ClassData {
+  _id: string;
+  name: string;
+  time: string;
+  image: {
+    type: string;
+    data: number[];
+  };
 }
+
+interface Enrollment {
+  _id: string;
+  userId: string;
+  classId: string;
+}
+
+const fetchClasses = async () => {
+  const response = await fetch('/api/classes');
+  const result = await response.json();
+  return result.data as ClassData[];
+};
+
+const fetchEnrollments = async (authToken: string) => {
+  const response = await fetch('/api/enrollments', {
+    headers: {
+      'Authorization': `Bearer ${authToken}`
+    }
+  });
+  const result = await response.json();
+  return result.data as Enrollment[];
+};
+
+const fetchClassCount = async (authToken: string) => {
+  const response = await fetch('/api/users', {
+    headers: {
+      'Authorization': `Bearer ${authToken}`
+    }
+  });
+  const result = await response.json();
+  return result.classCount;
+};
+
+const HomePage = () => {
+  const authToken = localStorage.getItem('authToken') || 'authToken';
+  const userName = localStorage.getItem('userName') || 'Usuário';
+  const [classes, setClasses] = useState<ClassData[]>([]);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [classCount, setClassCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [enrollmentLoading, setEnrollmentLoading] = useState<{ [key: string]: boolean }>({});
+  const [unenrollmentLoading, setUnenrollmentLoading] = useState<{ [key: string]: boolean }>({});
+
+  const classesPerPage = 4;
+  const totalPages = Math.ceil(classes.length / classesPerPage);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setClasses(await fetchClasses());
+      setEnrollments(await fetchEnrollments(authToken));
+      setClassCount(await fetchClassCount(authToken));
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [authToken]);
+
+  const handleEnrollment = async (classId: string) => {
+    setEnrollmentLoading({ ...enrollmentLoading, [classId]: true });
+
+    const response = await fetch('/api/enrollments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      },
+      body: JSON.stringify({ classId }),
+    });
+
+    const result = await response.json();
+
+    setEnrollmentLoading({ ...enrollmentLoading, [classId]: false });
+
+    if (result.success) {
+      setEnrollments([...enrollments, result.data]);
+      setClassCount(prevCount => prevCount - 1);
+      MySwal.fire({
+        icon: 'success',
+        title: 'Inscrito com sucesso',
+        text: 'Você se inscreveu na aula com sucesso.',
+      });
+    } else {
+      MySwal.fire({
+        icon: 'error',
+        title: 'Atenção',
+        text: result.message,
+      });
+    }
+  };
+
+  const handleUnenrollment = async (classId: string) => {
+    const enrollment = enrollments.find(e => e.classId === classId);
+    if (!enrollment) return;
+
+    setUnenrollmentLoading({ ...unenrollmentLoading, [classId]: true });
+
+    const response = await fetch(`/api/enrollments/${enrollment._id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      },
+    });
+
+    const result = await response.json();
+
+    setUnenrollmentLoading({ ...unenrollmentLoading, [classId]: false });
+
+    if (result.success) {
+      setEnrollments(enrollments.filter(e => e._id !== enrollment._id));
+      setClassCount(prevCount => prevCount + 1);
+      MySwal.fire({
+        icon: 'success',
+        title: 'Inscrição cancelada',
+        text: 'Você cancelou a inscrição com sucesso.',
+      });
+    } else {
+      MySwal.fire({
+        icon: 'error',
+        title: 'Erro ao cancelar inscrição',
+        text: result.message,
+      });
+    }
+  };
+
+  const arrayBufferToBase64 = (buffer: number[]) => {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  };
+
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    };
+    
+    const formattedDate = new Intl.DateTimeFormat('pt-BR', options).format(date);
+    return formattedDate.replace(',', '');
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const displayedClasses = classes.slice((currentPage - 1) * classesPerPage, currentPage * classesPerPage);
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPageNumbers = 5;
+    const halfMaxPageNumbers = Math.floor(maxPageNumbers / 2);
+
+    let startPage = Math.max(currentPage - halfMaxPageNumbers, 1);
+    let endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
+
+    if (endPage - startPage + 1 < maxPageNumbers) {
+      startPage = Math.max(endPage - maxPageNumbers + 1, 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <Button
+          key={i}
+          variant={currentPage === i ? 'contained' : 'outlined'}
+          color="secondary"
+          onClick={() => handlePageChange(i)}
+          sx={{
+            margin: '0 5px',
+            color: currentPage === i ? 'white' : 'purple',
+            backgroundColor: currentPage === i ? 'purple' : 'white',
+            borderColor: 'purple',
+            '&:hover': {
+              backgroundColor: 'darkPurple',
+              borderColor: 'darkPurple',
+              color: 'white',
+            },
+          }}
+        >
+          {i}
+        </Button>
+      );
+    }
+
+    return pageNumbers;
+  };
+
+  return (
+    <div className="bg-zinc-900 font-inconsolata">
+      <SideBar userName={userName} classCount={classCount} />
+      <Container sx={{ marginTop: 2 }}>
+        <Box mt={4}>
+          {loading ? (
+            <Typography variant="body1" color="white">Carregando aulas... <CircularProgress size={24} style={{ color: 'white' }} /> </Typography>
+          ) : (
+            displayedClasses.map(c => {
+              const isEnrolled = enrollments.some(e => e.classId === c._id);
+              const isEnrollmentLoading = enrollmentLoading[c._id];
+              const isUnenrollmentLoading = unenrollmentLoading[c._id];
+              return (
+                <Card key={c._id} sx={{ marginBottom: 2 }}>
+                  <CardContent>
+                    <Typography variant="h6">{c.name}</Typography>
+                    <Typography variant="body2" className='mb-2'>Horário: {formatDateTime(c.time)}</Typography>
+                    <img
+                      src={`data:image/jpeg;base64,${arrayBufferToBase64(c.image.data)}`}
+                      alt={c.name}
+                      style={{ width: '100%', height: 'auto', objectFit: 'cover', marginTop: '3px' }}
+                    />
+                    {isEnrolled ? (
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        sx={{ marginTop: 1 }}
+                        onClick={() => handleUnenrollment(c._id)}
+                        disabled={isUnenrollmentLoading}
+                      >
+                        {isUnenrollmentLoading ? <CircularProgress size={24} color="inherit" /> : 'Cancelar Inscrição'}
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{ marginTop: 1 }}
+                        onClick={() => handleEnrollment(c._id)}
+                        disabled={isEnrollmentLoading}
+                      >
+                        {isEnrollmentLoading ? <CircularProgress size={24} color="inherit" /> : 'Inscrever-se'}
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
+        </Box>
+
+        <Box display="flex" justifyContent="center" mt={2}>
+          {currentPage > 1 && (
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => handlePageChange(currentPage - 1)}
+              sx={{
+                margin: '0 5px',
+                color: 'white',
+                backgroundColor: 'purple',
+                borderColor: 'purple',
+                '&:hover': {
+                  backgroundColor: 'darkPurple',
+                  borderColor: 'darkPurple'
+                }
+              }}
+            >
+              Anterior
+            </Button>
+          )}
+          {renderPageNumbers()}
+          {currentPage < totalPages && (
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => handlePageChange(currentPage + 1)}
+              sx={{
+                margin: '0 5px',
+                color: 'white',
+                backgroundColor: 'purple',
+                borderColor: 'purple',
+                '&:hover': {
+                  backgroundColor: 'darkPurple',
+                  borderColor: 'darkPurple'
+                }
+              }}
+            >
+              Próxima
+            </Button>
+          )}
+        </Box>
+      </Container>
+    </div>
+  );
+};
+
+export default HomePage;
