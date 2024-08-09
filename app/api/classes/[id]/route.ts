@@ -1,10 +1,29 @@
 import dbConnect from "@/lib/mongodb";
 import formidable, { Fields, Files } from 'formidable';
 import fs from 'fs';
-import { convertToIncomingMessage } from "../route";
 import { NextResponse } from "next/server";
 import Class from "@/models/Class";
 import { Binary } from 'mongodb';
+import { IncomingMessage } from "http";
+import { Readable } from "stream";
+
+function convertToIncomingMessage(req: Request): IncomingMessage {
+    const readable = new Readable();
+    readable._read = () => {};
+  
+    req.arrayBuffer().then(buffer => {
+      readable.push(Buffer.from(buffer));
+      readable.push(null);
+    });
+  
+    const incomingMessage = readable as IncomingMessage;
+  
+    incomingMessage.headers = Object.fromEntries(req.headers.entries());
+    incomingMessage.method = req.method || 'POST';
+    incomingMessage.url = req.url || '';
+  
+    return incomingMessage;
+}
 
 export async function PUT(request: Request) {
     await dbConnect();

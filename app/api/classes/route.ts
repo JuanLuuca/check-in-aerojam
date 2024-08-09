@@ -5,6 +5,24 @@ import formidable, { File, Fields, Files } from 'formidable';
 import { Readable } from 'stream';
 import { IncomingMessage } from 'http';
 
+function convertToIncomingMessage(req: Request): IncomingMessage {
+  const readable = new Readable();
+  readable._read = () => {};
+
+  req.arrayBuffer().then(buffer => {
+    readable.push(Buffer.from(buffer));
+    readable.push(null);
+  });
+
+  const incomingMessage = readable as IncomingMessage;
+
+  incomingMessage.headers = Object.fromEntries(req.headers.entries());
+  incomingMessage.method = req.method || 'POST';
+  incomingMessage.url = req.url || '';
+
+  return incomingMessage;
+}
+
 export async function GET() {
   await dbConnect();
 
@@ -71,20 +89,3 @@ export async function POST(request: Request) {
   );
 }
 
-export function convertToIncomingMessage(req: Request): IncomingMessage {
-  const readable = new Readable();
-  readable._read = () => {};
-
-  req.arrayBuffer().then(buffer => {
-    readable.push(Buffer.from(buffer));
-    readable.push(null);
-  });
-
-  const incomingMessage = readable as IncomingMessage;
-
-  incomingMessage.headers = Object.fromEntries(req.headers.entries());
-  incomingMessage.method = req.method || 'POST';
-  incomingMessage.url = req.url || '';
-
-  return incomingMessage;
-}
