@@ -50,9 +50,7 @@ const fetchClassCount = async (authToken: string) => {
   return result.classCount;
 };
 
-const HomePage = () => {
-  const authToken = localStorage.getItem('authToken') || 'authToken';
-  const userName = localStorage.getItem('userName') || 'Usuário';
+const HomePage = () => { 
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [classCount, setClassCount] = useState(0);
@@ -61,8 +59,19 @@ const HomePage = () => {
   const [enrollmentLoading, setEnrollmentLoading] = useState<{ [key: string]: boolean }>({});
   const [unenrollmentLoading, setUnenrollmentLoading] = useState<{ [key: string]: boolean }>({});
 
+  const [authToken, setAuthToken] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+
   const classesPerPage = 4;
   const totalPages = Math.ceil(classes.length / classesPerPage);
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken') || 'authToken';
+    const name = localStorage.getItem('userName') || 'Usuário';
+
+    setAuthToken(token);
+    setUserName(name);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
