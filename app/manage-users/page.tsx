@@ -212,7 +212,7 @@ const ManageUsersPage = () => {
   };  
 
   return (
-    <div className="bg-zinc-900 font-inconsolata">
+    <div className="bg-zinc-900 font-sans">
       <SideBar userName="Admin" classCount={0} />
       <Container sx={{ marginTop: 2 }}>
         <Box mt={4}>

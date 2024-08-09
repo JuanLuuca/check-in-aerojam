@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br" className="bg-zinc-900">
-      <body className={`${inter.className}`} style={{ fontFamily: "cursive" }}>
+      <body className={`${inter.className}`} style={{ fontFamily: "sans-serif" }}>
         {children}
         <ToastContainer 
           position="top-right" 

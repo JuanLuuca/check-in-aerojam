@@ -501,7 +501,7 @@ const AddClassPage = () => {
             zIndex: 5,
           }}
         >
-          <Typography variant="h6" component="h2" className='text-black mb-2 font-mono'>
+          <Typography variant="h6" component="h2" className='text-black mb-2 font-sans'>
             Editar Aula
           </Typography>
           {editClassData && (

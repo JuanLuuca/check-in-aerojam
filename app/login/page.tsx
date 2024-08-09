@@ -40,7 +40,7 @@ const Login = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-cover bg-center p-4" style={{ backgroundImage: "url('/AreojamIMG.jpg')" }}>
+    <section className="min-h-screen flex items-center justify-center bg-repeat bg-center p-4" style={{ backgroundImage: "url('/AreojamIMG.jpg')" }}>
       <Container component="main" maxWidth="xs" className="bg-black bg-opacity-95 rounded-lg shadow p-8 space-y-6">
         <div className="flex flex-col items-center">
           <Typography component="h1" variant="h5" className="text-white mb-6">

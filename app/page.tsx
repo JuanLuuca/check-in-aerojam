@@ -241,7 +241,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="bg-zinc-900 font-mono">
+    <div className="bg-zinc-900 font-sans">
       <SideBar userName={userName} classCount={classCount} />
       <Container sx={{ marginTop: 2 }}>
         <Box mt={4}>
