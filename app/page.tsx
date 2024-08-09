@@ -41,13 +41,16 @@ const fetchEnrollments = async (authToken: string) => {
 };
 
 const fetchClassCount = async (authToken: string) => {
+  
   const response = await fetch('/api/users', {
     headers: {
       'Authorization': `Bearer ${authToken}`
     }
   });
   const result = await response.json();
-  return result.classCount;
+  
+  console.log('Class Count Result:', result.classCount);
+  return Number(result.classCount == undefined ? 0 : result.classCount);
 };
 
 const HomePage = () => { 
@@ -75,12 +78,20 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setClasses(await fetchClasses());
-      setEnrollments(await fetchEnrollments(authToken));
-      setClassCount(await fetchClassCount(authToken));
+      try {
+        const fetchedClasses = await fetchClasses();
+        const fetchedEnrollments = await fetchEnrollments(authToken);
+        const fetchedClassCount = await fetchClassCount(authToken);
+        
+        setClasses(fetchedClasses);
+        setEnrollments(fetchedEnrollments);
+        setClassCount(fetchedClassCount);
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
       setLoading(false);
     };
-
+  
     fetchData();
   }, [authToken]);
 
@@ -102,7 +113,11 @@ const HomePage = () => {
 
     if (result.success) {
       setEnrollments([...enrollments, result.data]);
-      setClassCount(prevCount => prevCount - 1);
+      setClassCount(prevCount => {
+        const newCount = prevCount - 1;
+        console.log('Updated Class Count after Enrollment:', newCount);
+        return newCount;
+      });
       MySwal.fire({
         icon: 'success',
         title: 'Inscrito com sucesso',
@@ -137,7 +152,11 @@ const HomePage = () => {
 
     if (result.success) {
       setEnrollments(enrollments.filter(e => e._id !== enrollment._id));
-      setClassCount(prevCount => prevCount + 1);
+      setClassCount(prevCount => {
+        const newCount = prevCount + 1;
+        console.log('Updated Class Count after Unenrollment:', newCount);
+        return newCount;
+      });
       MySwal.fire({
         icon: 'success',
         title: 'Inscrição cancelada',
