@@ -26,14 +26,14 @@ function convertToIncomingMessage(req: Request): IncomingMessage {
 export async function GET() {
   await dbConnect();
 
-    try {
-      const classes = await Class.find().exec();
-      return new NextResponse(JSON.stringify({ success: true, data: classes }), { status: 200 });
-    } catch (error) {
-      return new NextResponse(JSON.stringify({ success: false, message: 'Erro ao buscar aulas' }), { status: 500 });
-    }
-}
+  try {
+    const classes = await Class.find().sort({ time: -1 }).exec();
 
+    return new NextResponse(JSON.stringify({ success: true, data: classes }), { status: 200 });
+  } catch (error) {
+    return new NextResponse(JSON.stringify({ success: false, message: 'Erro ao buscar aulas' }), { status: 500 });
+  }
+}
 export async function POST(request: Request) {
   await dbConnect();
 
