@@ -339,7 +339,36 @@ const AddClassPage = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
-    setSelectedFileName(file ? file.name : null);
+  
+    if (file) {
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        MySwal.fire({
+          icon: 'error',
+          title: 'Atenção',
+          text: 'Formato de arquivo não suportado. Apenas JPEG, PNG e JPG são permitidos.',
+          customClass: {
+            popup: 'swal-custom-zindex',
+          }
+        });
+        return;
+      }
+  
+      const maxSize = 20 * 1024 * 1024;
+      if (file.size > maxSize) {
+        MySwal.fire({
+          icon: 'error',
+          title: 'Atenção',
+          text: 'O arquivo é muito grande. O tamanho máximo permitido é 20MB.',
+          customClass: {
+            popup: 'swal-custom-zindex',
+          }
+        });
+        return;
+      }
+  
+      setSelectedFileName(file.name);
+    }
   };
 
   if (!isAdmin) {
@@ -376,7 +405,7 @@ const AddClassPage = () => {
                 error={!!errorsAdd.time}
                 helperText={errorsAdd.time ? 'Horário é obrigatório' : ''}
               />
-              <input type="file" {...registerAdd('image', { required: true })} onChange={handleFileChange} />
+              <input type="file" accept="image/jpeg, image/png, image/jpg" {...registerAdd('image', { required: true })} onChange={handleFileChange} />
               {errorsAdd.image && <Typography color="error">Imagem é obrigatória</Typography>}
               {selectedFileName && <Typography>{selectedFileName}</Typography>}
               <Box sx={{ position: 'relative', display: 'inline-flex', marginTop: 2 }}>

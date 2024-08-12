@@ -34,6 +34,7 @@ export async function GET() {
     return new NextResponse(JSON.stringify({ success: false, message: 'Erro ao buscar aulas' }), { status: 500 });
   }
 }
+
 export async function POST(request: Request) {
   await dbConnect();
 
