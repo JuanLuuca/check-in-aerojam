@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
     const authToken = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '30m' });
 
-    const response = NextResponse.json({ success: true, message: 'Logado com sucesso', userName: username, authToken: authToken });
+    const response = NextResponse.json({ success: true, message: 'Logado com sucesso', userName: username, authToken: authToken, qtdAulas: user.qtdAulas });
 
     setCookie('authToken', authToken, { req: request, res: response, httpOnly: true, maxAge: 30 * 60 });
 

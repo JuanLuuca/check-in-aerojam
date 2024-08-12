@@ -31,6 +31,7 @@ const Login = () => {
     if (result.success) {
       localStorage.setItem("authToken", result.authToken);
       localStorage.setItem("userName", result.userName);
+      localStorage.setItem("qtdAulas", result.qtdAulas)
       window.location.href = '/';
     } else {
       toast.error(result.message || 'Login failed');

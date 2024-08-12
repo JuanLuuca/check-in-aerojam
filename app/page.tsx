@@ -40,22 +40,10 @@ const fetchEnrollments = async (authToken: string) => {
   return result.data as Enrollment[];
 };
 
-const fetchClassCount = async (authToken: string) => {
-  const response = await fetch('/api/users', {
-    headers: {
-      'Authorization': `Bearer ${authToken}`
-    }
-  });
-
-  const result = await response.json();
-  console.log('Class Count Result:', result.classCount);
-  return Number(result.classCount == undefined ? 0 : result.classCount);
-};
-
 const HomePage = () => { 
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [classCount, setClassCount] = useState(0);
+  const [classCount, setClassCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [enrollmentLoading, setEnrollmentLoading] = useState<{ [key: string]: boolean }>({});
@@ -80,7 +68,11 @@ const HomePage = () => {
       try {
         const fetchedClasses = await fetchClasses();
         const fetchedEnrollments = await fetchEnrollments(authToken);
-        const fetchedClassCount = await fetchClassCount(authToken);
+        const fetchedClassCountString = await localStorage.getItem("qtdAulas");
+
+        const fetchedClassCount = fetchedClassCountString !== null 
+          ? parseInt(fetchedClassCountString, 10) || 0
+          : 0;
         
         setClasses(fetchedClasses);
         setEnrollments(fetchedEnrollments);
@@ -114,7 +106,7 @@ const HomePage = () => {
       setEnrollments([...enrollments, result.data]);
       setClassCount(prevCount => {
         const newCount = prevCount - 1;
-        console.log('Updated Class Count after Enrollment:', newCount);
+        localStorage.setItem("qtdAulas", newCount.toString());
         return newCount;
       });
       MySwal.fire({
@@ -153,7 +145,7 @@ const HomePage = () => {
       setEnrollments(enrollments.filter(e => e._id !== enrollment._id));
       setClassCount(prevCount => {
         const newCount = prevCount + 1;
-        console.log('Updated Class Count after Unenrollment:', newCount);
+        localStorage.setItem("qtdAulas", newCount.toString());
         return newCount;
       });
       MySwal.fire({

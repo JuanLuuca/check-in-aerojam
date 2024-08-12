@@ -40,7 +40,7 @@ interface Enrollment {
 }
 
 const fetchClasses = async () => {
-  const response = await fetch('/api/classes');
+  const response = await fetch('/api/getClassesInAdd');
   const result = await response.json();
   return result.data as ClassData[];
 };
