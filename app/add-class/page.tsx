@@ -384,7 +384,7 @@ const AddClassPage = () => {
             <Typography variant="h5" component="h2" gutterBottom>
               Adicionar Nova Aula
             </Typography>
-            <form onSubmit={handleSubmitAdd(onSubmitAdd)}>
+            <form onSubmit={handleSubmitAdd(onSubmitAdd)} encType="multipart/form-data">
               <TextField
                 label="Nome da Aula"
                 variant="outlined"

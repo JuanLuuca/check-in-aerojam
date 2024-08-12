@@ -4,6 +4,7 @@ import Class from '@/models/Class';
 import formidable, { File, Fields, Files } from 'formidable';
 import { Readable } from 'stream';
 import { IncomingMessage } from 'http';
+import fs from 'fs';
 
 function convertToIncomingMessage(req: Request): IncomingMessage {
   const readable = new Readable();
@@ -21,18 +22,6 @@ function convertToIncomingMessage(req: Request): IncomingMessage {
   incomingMessage.url = req.url || '';
 
   return incomingMessage;
-}
-
-export async function GET() {
-  await dbConnect();
-
-  try {
-    const classes = await Class.find().sort({ time: -1 }).exec();
-
-    return new NextResponse(JSON.stringify({ success: true, data: classes }), { status: 200 });
-  } catch (error) {
-    return new NextResponse(JSON.stringify({ success: false, message: 'Erro ao buscar aulas' }), { status: 500 });
-  }
 }
 
 export async function POST(request: Request) {
@@ -61,7 +50,6 @@ export async function POST(request: Request) {
 
       const file = files.image[0] as File;
 
-      const fs = require('fs');
       fs.readFile(file.filepath, async (err: any, data: Buffer) => {
         if (err) {
           return reject(new NextResponse('Erro ao ler a imagem', { status: 500 }));
@@ -88,5 +76,17 @@ export async function POST(request: Request) {
     (json) => new NextResponse(json, { status: 201 }),
     (error) => new NextResponse(error, { status: 500 })
   );
+}
+
+export async function GET() {
+  await dbConnect();
+
+  try {
+    const classes = await Class.find().sort({ time: -1 }).exec();
+
+    return new NextResponse(JSON.stringify({ success: true, data: classes }), { status: 200 });
+  } catch (error) {
+    return new NextResponse(JSON.stringify({ success: false, message: 'Erro ao buscar aulas' }), { status: 500 });
+  }
 }
 
