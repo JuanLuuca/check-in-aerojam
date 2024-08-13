@@ -40,7 +40,7 @@ interface Enrollment {
 }
 
 const fetchClasses = async () => {
-  const response = await fetch('/api/getClassesInAdd?_=' + new Date().getTime());
+  const response = await fetch('/api/classes');
   const result = await response.json();
   return result.data as ClassData[];
 };
@@ -241,7 +241,7 @@ const AddClassPage = () => {
             popup: 'swal-custom-zindex',
           }
         }).then(() => {
-          window.location.reload();
+          fetchClasses().then((data) => setClasses(data));
         });
       } else {
         MySwal.fire({
