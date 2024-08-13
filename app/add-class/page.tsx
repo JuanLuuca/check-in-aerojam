@@ -40,7 +40,7 @@ interface Enrollment {
 }
 
 const fetchClasses = async () => {
-  const response = await fetch('/api/getClassesInAdd');
+  const response = await fetch('/api/getClassesInAdd?_=' + new Date().getTime());
   const result = await response.json();
   return result.data as ClassData[];
 };
@@ -103,20 +103,19 @@ const AddClassPage = () => {
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('datetime', data.time);
-
+  
     if (data.image.length > 0) {
       formData.append('image', data.image[0]);
     }
-
+  
     const response = await fetch('/api/classes', {
       method: 'POST',
       body: formData,
     });
-
+  
     const result = await response.json();
-
     setAddLoading(false);
-
+  
     if (result.success) {
       MySwal.fire({
         icon: 'success',
@@ -141,7 +140,7 @@ const AddClassPage = () => {
         }
       });
     }
-  };
+  };  
 
   useEffect(() => {
     fetchClasses().then((data) => {
@@ -210,28 +209,27 @@ const AddClassPage = () => {
 
   const handleEditSubmit: SubmitHandler<IFormInput> = async (data) => {
     if (!editClassData) return;
-
+  
     setEditLoading(true);
-
+  
     const formData = new FormData();
     formData.append('id', editClassData._id);
     formData.append('name', data.nameModal as any);
     formData.append('datetime', data.timeModal as any);
-
+  
     if (data.imageModal && data.imageModal.length > 0) {
       formData.append('image', data.imageModal[0]);
     }
-
+  
     try {
       const response = await fetch(`/api/classes/${editClassData._id}`, {
         method: 'PUT',
         body: formData,
       });
-
+  
       const result = await response.json();
-
       setEditLoading(false);
-
+  
       if (result.success) {
         closeEditModal();
         MySwal.fire({
@@ -266,7 +264,7 @@ const AddClassPage = () => {
         }
       });
     }
-  };
+  };  
 
   const arrayBufferToBase64 = (buffer: number[]) => {
     let binary = '';
