@@ -241,7 +241,7 @@ const AddClassPage = () => {
             popup: 'swal-custom-zindex',
           }
         }).then(() => {
-          fetchClasses().then((data) => setClasses(data));
+          window.location.reload();
         });
       } else {
         MySwal.fire({
