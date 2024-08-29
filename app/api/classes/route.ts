@@ -36,43 +36,6 @@ export async function GET() {
   }
 }
 
-// const getCurrentTimeInManaus = (): string => {
-//   const currentTimeUTC = new Date();
-//   const offset = 4 * 60 * 60 * 1000;
-//   const currentTimeManaus = new Date(currentTimeUTC.getTime() - offset);
-//   return currentTimeManaus.toISOString();
-// };
-
-// export async function GET() {
-//   await dbConnect();
-
-//   try {
-//     const currentTimeInManaus = getCurrentTimeInManaus();
-
-//     const today = new Date(currentTimeInManaus);
-//     const endDate = new Date(today);
-//     endDate.setDate(today.getDate() + 6);
-
-//     const classes = await Class.find({
-//       time: {
-//         $gte: today, 
-//         $lte: endDate 
-//       }
-//     }).sort({ time: -1 }).exec();
-
-//     return new NextResponse(
-//       JSON.stringify({ success: true, data: classes }), 
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     return new NextResponse(
-//       JSON.stringify({ success: false, message: 'Erro ao buscar aulas' }), 
-//       { status: 500 }
-//     );
-//   }
-// }
-
-
 export async function POST(request: Request) {
   await dbConnect();
 
