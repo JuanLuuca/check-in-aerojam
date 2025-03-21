@@ -1,8 +1,6 @@
-// lib/auth.ts
 import jwt from 'jsonwebtoken';
-import { NextRequest } from 'next/server';
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY || 'your_secret_key';
+const SECRET_KEY = process.env.JWT_SECRET_KEY || "";
 
 export const getUserIdFromToken = (token: string | undefined): string | null => {
   if (!token) return null;

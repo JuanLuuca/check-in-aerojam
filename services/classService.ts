@@ -1,6 +1,5 @@
 import { ClassData } from "@/app/add-class/page";
 
-// services/classService.ts
 export const fetchClasses = async () => {
     try {
     const response = await fetch('/api/classes');
