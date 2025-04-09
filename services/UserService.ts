@@ -1,4 +1,4 @@
-import { User } from "../types/userTypes";
+import { User } from "@/app/types/userTypes";
 
 export const perfilLabels: { [key: number]: string } = {
     1: 'Administrador',
@@ -53,4 +53,14 @@ export const updateUser = async (userId: string, updateData: { perfil?: number, 
   });
 
   return await response.json();
+};
+
+export const fetchUserAdmin = async (authToken: string) => {
+  const response = await fetch('/api/users', {
+    headers: {
+      'Authorization': `Bearer ${authToken}`
+    }
+  });
+  const result = await response.json();
+  return result.Perfil;
 };

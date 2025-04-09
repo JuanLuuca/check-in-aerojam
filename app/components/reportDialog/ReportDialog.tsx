@@ -1,8 +1,20 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogActions, Button, Typography, List, ListItem, ListItemText, Divider } from '@mui/material';
-import Swal from 'sweetalert2';
+import { EnrollmentAddClass } from '../../types/ClassEnrollmentsTypes';
 
-const formatDateTime = (dateString: string) => {
+interface ReportDialogProps {
+  reportDialogOpen: boolean;
+  closeReportDialog: () => void;
+  reportData: EnrollmentAddClass[];
+}
+
+const ReportDialog: React.FC<ReportDialogProps> = ({
+  reportDialogOpen,
+  closeReportDialog,
+  reportData,
+}) => {
+  if (!reportDialogOpen) return null;
+
+  const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
       timeZone: 'UTC',
@@ -15,109 +27,61 @@ const formatDateTime = (dateString: string) => {
     };
     const formattedDate = new Intl.DateTimeFormat('pt-BR', options).format(date);
     return formattedDate.replace(',', '');
-};
-
-const ReportDialog = ({ reportDialogOpen, closeReportDialog, reportData }: any) => {
-
-    const handleClearReport = async () => {
-        const classId = reportData[0]?.classId;
-    
-        if (!classId) {
-            Swal.fire(
-                'Erro!',
-                'Não foi possível identificar o ID da aula.',
-                'error'
-            );
-            return;
-        }
-    
-        const result = await Swal.fire({
-            title: 'Tem certeza?',
-            text: 'Ao limpar o relatório, a ação não pode ser revertida!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Apagar',
-            cancelButtonText: 'Cancelar',
-            customClass: {
-                popup: 'swal-custom-zindex',
-            }
-        });
-    
-        if (result.isConfirmed) {
-            try {
-                const response = await fetch(`/api/enrollments?classId=${classId}`, {
-                    method: 'DELETE',
-                });
-    
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-    
-                const responseData = await response.json();
-    
-                if (responseData.success) {
-                    Swal.fire(
-                        'Sucesso!',
-                        'O relatório foi limpo com sucesso.',
-                        'success'
-                    );
-                    closeReportDialog();
-                } else {
-                    Swal.fire(
-                        'Erro!',
-                        'Não foi possível limpar o relatório.',
-                        'error'
-                    );
-                    console.error('Erro ao limpar o relatório:', responseData.message);
-                }
-            } catch (error: any) {
-                Swal.fire(
-                    'Erro!',
-                    `Ocorreu um erro ao limpar o relatório: ${error.message}`,
-                    'error'
-                );
-                console.error('Erro ao limpar o relatório:', error);
-            }
-        }
-    };    
+  };
 
   return (
-    <Dialog sx={{ zIndex: 5 }} open={reportDialogOpen} onClose={closeReportDialog} maxWidth="sm" fullWidth>
-      <DialogContent>
-        {reportData.length > 0 ? (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Pessoas que se inscreveram nesta aula:
-            </Typography>
-            <List>
-              {reportData.map((enrollment: any, index: any) => (
-                <React.Fragment key={index}>
-                  <ListItem>
-                    <ListItemText
-                      primary={`Usuário: ${enrollment.userName}`}
-                      secondary={`Data da Inscrição: ${formatDateTime(enrollment.enrollmentDate)}`}
-                    />
-                  </ListItem>
-                  {index < reportData.length - 1 && <Divider />}
-                </React.Fragment>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-zinc-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+        <div className="flex justify-between items-center p-6 border-b border-zinc-700">
+          <h2 className="text-2xl font-bold text-white">Relatório de Inscrições</h2>
+          <button
+            onClick={closeReportDialog}
+            className="text-zinc-400 hover:text-white transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-6 overflow-auto max-h-[calc(90vh-120px)]">
+          {reportData.length > 0 ? (
+            <div className="space-y-4">
+              {reportData.map((enrollment, index) => (
+                <div
+                  key={index}
+                  className="bg-zinc-700 rounded-lg p-4 hover:bg-zinc-600 transition-colors"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-zinc-400">Usuário</p>
+                      <p className="text-white font-medium">{enrollment.userName}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-zinc-400">Data da Inscrição</p>
+                      <p className="text-white font-medium">{formatDateTime(enrollment.enrollmentDate)}</p>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </List>
-          </div>
-        ) : (
-          <Typography variant="body2">Nenhuma inscrição encontrada para esta aula.</Typography>
-        )}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClearReport} color="secondary">
-          Limpar Relatório
-        </Button>
-        <Button onClick={closeReportDialog} color="primary">
-          Fechar
-        </Button>
-      </DialogActions>
-    </Dialog>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-zinc-400">Nenhuma inscrição encontrada</p>
+            </div>
+          )}
+        </div>
+
+        <div className="p-6 border-t border-zinc-700 flex justify-end">
+          <button
+            onClick={closeReportDialog}
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

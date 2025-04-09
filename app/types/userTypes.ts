@@ -9,21 +9,29 @@ export interface User {
 }
 
 export interface ModalCreateUserProps {
-    openCreateModal: boolean;
-    setOpenCreateModal: (open: boolean) => void;
-    handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleCreateUser: () => void;
-    handlePerfilChange: (event: SelectChangeEvent<number>) => void;
-    newUser: Omit<User, '_id'>
-    formLoading: boolean;
+    open: boolean;
+    onClose: () => void;
+    onSubmit: () => void;
+    loading: boolean;
+    user: Omit<User, '_id'>;
+    onInputChange: (event: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => void;
+    onPerfilChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export interface ModalEditUserProps {
-    editUser: Partial<User> | null;
-    setEditUser: (open: Partial<User> | null) => void;
-    setOpenEditModal: (open: boolean) => void;
-    handleEditInputChange: (open: React.ChangeEvent<HTMLInputElement>) => void;
-    handleEditPerfilChange: (event: SelectChangeEvent<number>) => void;
-    handleEditUser: () => void;
-    formLoading: boolean;
+    open: boolean;
+    onClose: () => void;
+    onSubmit: () => void;
+    loading: boolean;
+    user: Partial<User> | null;
+    onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onPerfilChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+export interface ModalDeleteUserProps {
+    open: boolean;
+    onClose: () => void;
+    onDelete: () => void;
+    loading: boolean;
+    user: User | null;
 }

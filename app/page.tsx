@@ -1,54 +1,15 @@
-'use client';
+"use client"
 
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Button, Box, Card, CardContent, CircularProgress } from '@mui/material';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import SideBar from './components/sidebar/Sidebar';
+import { ClassData, Enrollment } from './types/ClassEnrollmentsTypes';
+import { fetchClassesFilter, fetchEnrollments } from '@/services/ClassEnrollmentsService';
+import { useRouter } from 'next/navigation';
 
 const MySwal = withReactContent(Swal);
-
-interface ClassData {
-  _id: string;
-  name: string;
-  time: string;
-  image: {
-    type: string;
-    data: number[];
-  };
-}
-
-interface Enrollment {
-  _id: string;
-  userId: string;
-  classId: string;
-}
-
-const fetchClasses = async () => {
-  const response = await fetch('/api/classes');
-  const result = await response.json();
-  const classes = result.data as ClassData[];
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const upcomingClasses = classes.filter((classData) => {
-    const classDate = new Date(classData.time);
-    return classDate >= today;
-  });
-
-  return upcomingClasses;
-};
-
-const fetchEnrollments = async (authToken: string) => {
-  const response = await fetch('/api/enrollments', {
-    headers: {
-      'Authorization': `Bearer ${authToken}`
-    }
-  });
-  const result = await response.json();
-  return result.data as Enrollment[];
-};
 
 const HomePage = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
@@ -61,21 +22,32 @@ const HomePage = () => {
 
   const [authToken, setAuthToken] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
+  const [isFirstLogin, setIsFirstLogin] = useState(true);
+  const router = useRouter();
 
   const classesPerPage = 4;
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken') || 'authToken';
-    const name = localStorage.getItem('userName') || 'Usuário';
+    const token = localStorage.getItem('authToken');
+    const storedUserName = localStorage.getItem('userName');
+    const firstLogin = localStorage.getItem('firstLogin') === 'true';
 
-    setAuthToken(token);
-    setUserName(name);
-  }, []);
+    if (!token) {
+      router.push('/login');
+      return;
+    }
 
-  useEffect(() => {
+    if (storedUserName) {
+      setUserName(storedUserName);
+      setIsFirstLogin(firstLogin);
+      if (firstLogin) {
+        localStorage.setItem('firstLogin', 'false');
+      }
+    }
+
     const fetchData = async () => {
       try {
-        const fetchedClasses = await fetchClasses();
+        const fetchedClasses = await fetchClassesFilter();
         const fetchedEnrollments = await fetchEnrollments(authToken);
         const fetchedClassCountString = await localStorage.getItem("qtdAulas");
 
@@ -93,7 +65,7 @@ const HomePage = () => {
     };
   
     fetchData();
-  }, [authToken]);
+  }, [authToken, router]);
 
   const handleEnrollment = async (classId: string) => {
     setEnrollmentLoading({ ...enrollmentLoading, [classId]: true });
@@ -251,97 +223,96 @@ const HomePage = () => {
   };
 
   return (
-    <div className="bg-zinc-900 font-sans">
+    <div className="min-h-screen bg-zinc-900 text-white">
       <SideBar userName={userName} classCount={classCount} />
-      <Container sx={{ marginTop: 2 }}>
-        <Box mt={4}>
-          {loading ? (
-            <Typography variant="body1" color="white">Carregando aulas... <CircularProgress size={24} style={{ color: 'white' }} /> </Typography>
-          ) : (
-            displayedClasses.map(c => {
+      <main className="container mx-auto px-4 pt-20 pb-8 lg:ml-64 lg:max-w-[calc(100%-16rem)]">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">
+            {isFirstLogin ? `Bem-vindo, ${userName}!` : `Bem-vindo de volta, ${userName}!`}
+          </h1>
+          <p className="text-zinc-400">
+            {isFirstLogin 
+              ? 'Estamos felizes em tê-lo conosco! Aqui estão suas aulas disponíveis.'
+              : 'Aqui estão suas aulas disponíveis.'}
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <span>Carregando aulas...</span>
+          </div>
+        ) : classes.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-zinc-400 text-lg">Nenhuma aula disponível no momento.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {displayedClasses.map(c => {
               const isEnrolled = enrollments.some(e => e.classId === c._id);
               const isEnrollmentLoading = enrollmentLoading[c._id];
               const isUnenrollmentLoading = unenrollmentLoading[c._id];
               return (
-                <Card key={c._id} sx={{ marginBottom: 2 }}>
-                  <CardContent>
-                    <Typography variant="h6">{c.name}</Typography>
-                    <Typography variant="body2" className='mb-2'>Horário: {formatDateTime(c.time)}</Typography>
+                <div key={c._id} className="bg-zinc-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <div className="p-4">
+                    <h3 className="text-xl font-semibold mb-2">{c.name}</h3>
+                    <p className="text-zinc-400 mb-4">Horário: {formatDateTime(c.time)}</p>
                     <img
                       src={`data:image/jpeg;base64,${arrayBufferToBase64(c.image.data)}`}
                       alt={c.name}
-                      style={{ width: '100%', height: 'auto', objectFit: 'cover', marginTop: '3px' }}
+                      className="w-full h-48 object-cover rounded-lg mb-4"
                     />
                     {isEnrolled ? (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        sx={{ marginTop: 1 }}
+                      <button
                         onClick={() => handleUnenrollment(c._id)}
                         disabled={isUnenrollmentLoading}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center space-x-2"
                       >
-                        {isUnenrollmentLoading ? <CircularProgress size={24} color="inherit" /> : 'Cancelar Inscrição'}
-                      </Button>
+                        {isUnenrollmentLoading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          'Cancelar Inscrição'
+                        )}
+                      </button>
                     ) : (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ marginTop: 1 }}
+                      <button
                         onClick={() => handleEnrollment(c._id)}
                         disabled={isEnrollmentLoading}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center space-x-2"
                       >
-                        {isEnrollmentLoading ? <CircularProgress size={24} color="inherit" /> : 'Inscrever-se'}
-                      </Button>
+                        {isEnrollmentLoading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          'Inscrever-se'
+                        )}
+                      </button>
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               );
-            })
-          )}
-        </Box>
-
-        <Box display="flex" justifyContent="center" mt={2}>
-          {currentPage > 1 && (
-            <Button
-              variant="outlined"
-              color="primary"
+            })}
+          </div>
+        )}
+        {!loading && totalPages > 1 && (
+          <div className="flex justify-center items-center space-x-2 mt-8">
+            <button
               onClick={() => handlePageChange(currentPage - 1)}
-              sx={{
-                margin: '0 5px',
-                color: 'white',
-                backgroundColor: 'purple',
-                borderColor: 'purple',
-                '&:hover': {
-                  backgroundColor: 'darkPurple',
-                  borderColor: 'darkPurple'
-                }
-              }}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-lg bg-zinc-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-700 transition-colors duration-300"
             >
               Anterior
-            </Button>
-          )}
-          {renderPageNumbers()}
-          {currentPage < totalPages && (
-            <Button
-              variant="outlined"
-              color="primary"
+            </button>
+            {renderPageNumbers()}
+            <button
               onClick={() => handlePageChange(currentPage + 1)}
-              sx={{
-                margin: '0 5px',
-                color: 'white',
-                backgroundColor: 'purple',
-                borderColor: 'purple',
-                '&:hover': {
-                  backgroundColor: 'darkPurple',
-                  borderColor: 'darkPurple'
-                }
-              }}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-lg bg-zinc-800 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-700 transition-colors duration-300"
             >
               Próxima
-            </Button>
-          )}
-        </Box>
-      </Container>
+            </button>
+          </div>
+        )}
+      </main>
     </div>
   );
 };
