@@ -5,12 +5,16 @@ interface ReportDialogProps {
   reportDialogOpen: boolean;
   closeReportDialog: () => void;
   reportData: EnrollmentAddClass[];
+  onClearReport: () => void;
+  loading?: boolean;
 }
 
 const ReportDialog: React.FC<ReportDialogProps> = ({
   reportDialogOpen,
   closeReportDialog,
   reportData,
+  onClearReport,
+  loading = false,
 }) => {
   if (!reportDialogOpen) return null;
 
@@ -44,7 +48,7 @@ const ReportDialog: React.FC<ReportDialogProps> = ({
           </button>
         </div>
 
-        <div className="p-6 overflow-auto max-h-[calc(90vh-120px)]">
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-12rem)]">
           {reportData.length > 0 ? (
             <div className="space-y-4">
               {reportData.map((enrollment, index) => (
@@ -67,12 +71,41 @@ const ReportDialog: React.FC<ReportDialogProps> = ({
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-zinc-400">Nenhuma inscrição encontrada</p>
+              <p className="text-zinc-400">Nenhuma inscrição encontrada para esta aula.</p>
             </div>
           )}
         </div>
 
-        <div className="p-6 border-t border-zinc-700 flex justify-end">
+        <div className="p-6 border-t border-zinc-700 flex justify-end space-x-4">
+          <button
+            onClick={onClearReport}
+            disabled={loading || reportData.length === 0}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Limpando...</span>
+              </>
+            ) : (
+              <>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                <span>Limpar Relatório</span>
+              </>
+            )}
+          </button>
           <button
             onClick={closeReportDialog}
             className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200"

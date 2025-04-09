@@ -35,6 +35,8 @@ const AddClassPage = () => {
   const [reportData, setReportData] = useState<EnrollmentAddClass[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [currentClassId, setCurrentClassId] = useState<string>('');
+  const [clearLoading, setClearLoading] = useState(false);
 
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
@@ -104,25 +106,24 @@ const AddClassPage = () => {
   }, []);
 
   const fetchAndSetReportData = async (classId: string) => {
-    
     try {
       const response = await fetch(`/api/enrollments?classId=${classId}`);
       const result = await response.json();
   
-      console.log("result: ", result);
-  
       if (result.success) {
-        console.log("result.enrollments: ", result.enrollments);
-        setReportData(result.enrollments);
+        setReportData(result.enrollments || []);
       } else {
-        MySwal.fire({
-          icon: 'error',
-          title: 'Erro ao obter dados do relatório',
-          text: result.message,
-          customClass: {
-            popup: 'swal-custom-zindex',
-          }
-        });
+        if (result.message !== 'Nenhuma inscrição encontrada para esta aula.') {
+          MySwal.fire({
+            icon: 'error',
+            title: 'Erro ao obter dados do relatório',
+            text: result.message,
+            customClass: {
+              popup: 'swal-custom-zindex',
+            }
+          });
+        }
+        setReportData([]);
       }
     } catch (error: any) {
       MySwal.fire({
@@ -133,12 +134,14 @@ const AddClassPage = () => {
           popup: 'swal-custom-zindex',
         }
       });
+      setReportData([]);
     }
   };  
   
   const openReportDialog = (classItem: ClassData) => {
     const selectedDate = formatDateTime(classItem.time);
     setSelectedDate(selectedDate);
+    setCurrentClassId(classItem._id);
     fetchAndSetReportData(classItem._id);
     setReportDialogOpen(true);
   };  
@@ -380,6 +383,42 @@ const AddClassPage = () => {
       console.error('Erro ao criar aula:', error);
     } finally {
       setFormLoading(false);
+    }
+  };
+
+  const handleClearReport = async () => {
+    setClearLoading(true);
+    try {
+      const response = await fetch(`/api/enrollments?classId=${currentClassId}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success('Relatório limpo com sucesso!');
+        fetchAndSetReportData(currentClassId);
+      } else {
+        MySwal.fire({
+          icon: 'error',
+          title: 'Erro ao limpar relatório',
+          text: result.message,
+          customClass: {
+            popup: 'swal-custom-zindex',
+          }
+        });
+      }
+    } catch (error: any) {
+      MySwal.fire({
+        icon: 'error',
+        title: 'Erro ao limpar relatório',
+        text: error.message,
+        customClass: {
+          popup: 'swal-custom-zindex',
+        }
+      });
+    } finally {
+      setClearLoading(false);
     }
   };
 
@@ -632,7 +671,13 @@ const AddClassPage = () => {
         </div>
       </Modal>
 
-      <ReportDialog reportDialogOpen={reportDialogOpen} closeReportDialog={closeReportDialog} reportData={reportData} />
+      <ReportDialog 
+        reportDialogOpen={reportDialogOpen} 
+        closeReportDialog={closeReportDialog} 
+        reportData={reportData}
+        onClearReport={handleClearReport}
+        loading={clearLoading}
+      />
 
     </div>
   );
